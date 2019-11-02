@@ -14,7 +14,8 @@ import (
 const (
 	listen   = "0.0.0.0"
 	port     = "8080"
-	dataPost = "/tmp/post.txt"
+	dataDir  = "/var/data"
+	dataPost = dataDir+"/post.txt"
 )
 
 func getContentFile(file string) string {
@@ -27,8 +28,14 @@ func getContentFile(file string) string {
 }
 
 func writeContentFile(file string, content []byte) {
+	_, err := os.Stat(dataDir)
+	if err != nil {
+		if err := os.Mkdir(dataDir, 0755); err != nil {
+			log.Fatal(err)
+		}
+	}
 	contentByte := []byte(content)
-	err := ioutil.WriteFile(file, contentByte, 0644)
+	err = ioutil.WriteFile(file, contentByte, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
